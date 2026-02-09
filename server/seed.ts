@@ -72,6 +72,12 @@ export async function seedDatabase() {
 
     log("Seeding database with sample data...", "seed");
 
+    // Create admin user
+    await storage.createUser({
+      username: "admin",
+      password: "admin123"
+    });
+
     const createdCustomers = [];
     for (const c of seedCustomers) {
       const customer = await storage.createCustomer(c);
