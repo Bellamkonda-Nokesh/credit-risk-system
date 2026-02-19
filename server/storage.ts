@@ -184,9 +184,9 @@ function calculateRisk(customer: InsertCustomer): { riskScore: number; riskCateg
   else if (customer.employmentYears < 2) score += 10;
 
   // Existing loans
-  if (customer.existingLoans === 0) score -= 5;
-  else if (customer.existingLoans > 3) score += 10;
-  else if (customer.existingLoans > 5) score += 20;
+  if ((customer.existingLoans ?? 0) === 0) score -= 5;
+  else if ((customer.existingLoans ?? 0) > 3) score += 10;
+  else if ((customer.existingLoans ?? 0) > 5) score += 20;
 
   // Home ownership
   if (customer.homeOwnership === "Own") score -= 8;
