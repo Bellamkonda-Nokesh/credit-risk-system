@@ -67,7 +67,7 @@ A full-stack web application for financial risk analysis and credit default pred
 ## Project Structure
 
 ```
-RiskLens/
+credit-risk-system/
 ├── client/                     # Frontend application
 │   ├── src/
 │   │   ├── components/
@@ -121,7 +121,7 @@ RiskLens/
 
 1. **Clone or extract the project:**
    ```bash
-   cd RiskLens
+   cd credit-risk-system
    ```
 
 2. **Install dependencies:**
@@ -151,7 +151,7 @@ SESSION_SECRET=your-secret-key-here
 
 1. **Create a PostgreSQL database:**
    ```sql
-   CREATE DATABASE risklens;
+   CREATE DATABASE credit-risk-system;
    ```
 
 2. **Push the schema to the database:**
