@@ -1,5 +1,13 @@
 import { storage } from "./storage";
-import { log } from "./index";
+import { log } from "./logger";
+import crypto from "crypto";
+
+function hashPassword(password: string): string {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+  return `${salt}:${hash}`;
+}
+
 
 const seedCustomers = [
   { name: "Sarah Mitchell", age: 34, gender: "Female", email: "sarah.m@email.com", phone: "+1-555-0101", occupation: "Software Engineer", annualIncome: 125000, monthlyExpenses: 3200, creditScore: 780, existingLoans: 1, employmentYears: 8, homeOwnership: "Own", maritalStatus: "Married", dependents: 2 },
@@ -72,10 +80,10 @@ export async function seedDatabase() {
 
     log("Seeding database with sample data...", "seed");
 
-    // Create admin user
+    // Create admin user with a properly hashed password
     await storage.createUser({
       username: "admin",
-      password: "admin123"
+      password: hashPassword("admin123"),
     });
 
     const createdCustomers = [];

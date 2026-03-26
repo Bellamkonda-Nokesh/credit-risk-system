@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "../backend/routes";
+import { setupAuth } from "../backend/auth";
 import { createServer } from "http";
 
 const app = express();
@@ -8,7 +9,7 @@ const httpServer = createServer(app);
 
 app.use(
   express.json({
-    verify: (req: any, _res, buf) => {
+    verify: (req: any, _res: Response, buf: Buffer) => {
       req.rawBody = buf;
     },
   })
@@ -16,7 +17,10 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
-// Seed database on cold start (runs once per serverless instance)
+// Initialise auth (passport + session) — required before routes
+setupAuth(app);
+
+// Seed database once per serverless cold start
 let seeded = false;
 app.use(async (_req, _res, next) => {
   if (!seeded) {

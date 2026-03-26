@@ -32,7 +32,7 @@ export async function setupVite(server: Server, app: Express) {
     const url = req.originalUrl;
 
     try {
-      const clientTemplate = path.resolve(__dirname, "..", "client", "index.html");
+      const clientTemplate = path.resolve(__dirname, "..", "frontend", "index.html");
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
       
       // Update with a unique version to break browser favicon/template cache
