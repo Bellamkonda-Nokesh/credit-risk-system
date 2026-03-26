@@ -72,19 +72,25 @@ const seedModelMetrics = [
 
 export async function seedDatabase() {
   try {
+    // Always ensure admin user exists with a properly hashed password
+    const existingAdmin = await storage.getUserByUsername("admin");
+    if (!existingAdmin) {
+      await storage.createUser({
+        username: "admin",
+        password: hashPassword("admin123"),
+      });
+      log("Created admin user with hashed password", "seed");
+    } else if (!existingAdmin.password.includes(":")) {
+      // Password is stored as plaintext (old seed) — fix it
+      await storage.updateUserPassword("admin", hashPassword("admin123"));
+      log("Fixed admin user password hash", "seed");
+    }
+
     const existingCustomers = await storage.getCustomers();
     if (existingCustomers.length > 0) {
       log("Database already seeded, skipping...", "seed");
       return;
     }
-
-    log("Seeding database with sample data...", "seed");
-
-    // Create admin user with a properly hashed password
-    await storage.createUser({
-      username: "admin",
-      password: hashPassword("admin123"),
-    });
 
     const createdCustomers = [];
     for (const c of seedCustomers) {
