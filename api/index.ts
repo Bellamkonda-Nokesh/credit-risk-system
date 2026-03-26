@@ -17,27 +17,40 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
-// Initialise auth (passport + session) — required before routes
+// Initialise auth (passport + session) — must be before routes
 setupAuth(app);
 
-// Seed database once per serverless cold start
-let seeded = false;
+// Bootstrap: seed DB + register routes (done once per cold start)
+let ready = false;
+let initError: Error | null = null;
+
+async function init() {
+  try {
+    const { seedDatabase } = await import("../backend/seed");
+    await seedDatabase();
+  } catch (err) {
+    console.error("Seed error (non-fatal):", err);
+  }
+  await registerRoutes(httpServer, app);
+  ready = true;
+}
+
+// Start initialisation immediately (not per-request)
+const initPromise = init().catch((err) => {
+  initError = err;
+  console.error("Fatal init error:", err);
+});
+
+// Wait for init to complete before handling any request
 app.use(async (_req, _res, next) => {
-  if (!seeded) {
-    try {
-      const { seedDatabase } = await import("../backend/seed");
-      await seedDatabase();
-      seeded = true;
-    } catch (err) {
-      console.error("Seed error (non-fatal):", err);
-      seeded = true; // don't retry on every request
-    }
+  if (!ready) {
+    await initPromise;
+  }
+  if (initError) {
+    return next(initError);
   }
   next();
 });
-
-// Register all API routes
-registerRoutes(httpServer, app);
 
 // Global error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
