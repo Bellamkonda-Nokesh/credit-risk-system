@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage, calculatePrediction } from "./storage";
-import { insertCustomerSchema, insertLoanSchema } from "@shared/schema";
+import { insertCustomerSchema, insertLoanSchema } from "../shared/schema";
 
 export async function registerRoutes(
   httpServer: Server,

@@ -6,7 +6,7 @@ import {
   type ModelMetric, type InsertModelMetric,
   type Report, type InsertReport,
   users, customers, loans, predictions, modelMetrics, reports,
-} from "@shared/schema";
+} from "../shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
 
